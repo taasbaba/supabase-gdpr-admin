@@ -1,131 +1,22 @@
-import { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { supabase } from "./lib/supabaseClient";
-import { useNavigate } from "react-router-dom";
+// src/App.tsx
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AuthPage from "./pages/AuthPage"; // now your login/register
+import DashboardPage from "./pages/DashboardPage";
+import VerifyPendingPage from "./pages/VerifyPendingPage";
+import SuccessPage from "./pages/SuccessPage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 const App = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
-  const [message, setMessage] = useState("");
-  const navigate = useNavigate();
-
-  // Handles user registration
-  const handleRegister = async () => {
-    if (!email || !password) return;
-
-    setStatus("loading");
-    setMessage("");
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: process.env.REACT_APP_EMAIL_REDIRECT,
-      },
-    });
-
-    if (error) {
-      setStatus("error");
-      setMessage("Registration failed: " + error.message);
-    } else {
-      navigate("/verify-pending");
-    }
-  };
-
-  // Handles user login
-  const handleLogin = async () => {
-    if (!email || !password) return;
-
-    setStatus("loading");
-    setMessage("");
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      setStatus("error");
-      setMessage("Login failed: " + error.message);
-      return;
-    }
-
-    const user = data.user;
-    const isVerified = !!user?.email_confirmed_at;
-
-    if (!isVerified) {
-      await supabase.auth.signOut();
-      setStatus("error");
-      setMessage("Email not verified. Please check your inbox.");
-      return;
-    }
-
-    navigate("/dashboard");
-  };
-
   return (
-    <div
-      className="d-flex justify-content-center align-items-center vh-100"
-      style={{ backgroundColor: "#007BFF" }}
-    >
-      <div
-        className="bg-white rounded p-4 shadow"
-        style={{ width: "100%", maxWidth: 400 }}
-      >
-        <h3 className="text-center mb-4">Account Access</h3>
-
-        <div className="mb-3">
-          <label htmlFor="email" className="form-label">
-            Email address
-          </label>
-          <input
-            type="email"
-            className="form-control"
-            id="email"
-            placeholder="you@example.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={status === "loading"}
-          />
-        </div>
-
-        <div className="mb-3">
-          <label htmlFor="password" className="form-label">
-            Password
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            id="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            disabled={status === "loading"}
-          />
-        </div>
-
-        <div className="d-flex gap-2">
-          <button
-            className="btn btn-secondary w-50"
-            onClick={handleLogin}
-            disabled={status === "loading" || !email || !password}
-          >
-            {status === "loading" ? "Loading..." : "Login"}
-          </button>
-
-          <button
-            className="btn btn-primary w-50"
-            onClick={handleRegister}
-            disabled={status === "loading" || !email || !password}
-          >
-            {status === "loading" ? "Loading..." : "Register"}
-          </button>
-        </div>
-
-        {message && <div className="alert alert-danger mt-3">{message}</div>}
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<AuthPage />} />
+        <Route path="/verify-pending" element={<VerifyPendingPage />} />
+        <Route path="/success" element={<SuccessPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="*" element={<NotFoundPage />} /> {/* Catch-all */}
+      </Routes>
+    </BrowserRouter>
   );
 };
 

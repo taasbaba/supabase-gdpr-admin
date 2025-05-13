@@ -1,0 +1,40 @@
+.auth-bg {
+  background: radial-gradient(ellipse at center, #002244 0%, #000c1f 100%);
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-bg::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 180, 255, 0.07) 0%,
+    transparent 70%
+  );
+  animation: pulseLight 20s linear infinite;
+  z-index: 0;
+}
+
+.auth-bg > .d-flex {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes pulseLight {
+  0% {
+    transform: translate(0%, 0%) scale(1);
+  }
+  50% {
+    transform: translate(30%, 30%) scale(1.2);
+  }
+  100% {
+    transform: translate(0%, 0%) scale(1);
+  }
+}
