@@ -1,4 +1,4 @@
-.auth-bg {
+.app-bg {
   background: radial-gradient(ellipse at center, #002244 0%, #000c1f 100%);
   height: 100vh;
   width: 100%;
@@ -6,7 +6,7 @@
   overflow: hidden;
 }
 
-.auth-bg::before {
+.app-bg::before {
   content: "";
   position: absolute;
   top: -50%;
@@ -22,7 +22,7 @@
   z-index: 0;
 }
 
-.auth-bg > .d-flex {
+.app-bg > .d-flex {
   position: relative;
   z-index: 1;
 }

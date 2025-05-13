@@ -1,5 +1,4 @@
 import React from "react";
-import "./AuthForm.css";
 
 interface Props {
   email: string;
@@ -23,7 +22,7 @@ const AuthForm: React.FC<Props> = ({
   message,
 }) => {
   return (
-    <div className="auth-bg">
+    <div className="app-bg">
       <div className="d-flex justify-content-center align-items-center vh-100">
         <div
           className="p-4 shadow rounded bg-white"

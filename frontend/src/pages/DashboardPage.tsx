@@ -15,10 +15,12 @@ const DashboardPage = () => {
 
   return (
     <AuthGuard>
-      <div className="vh-100 d-flex justify-content-center align-items-center bg-light">
-        <div className="text-center">
-          <h2>🎉 Welcome {email}</h2>
-          <p>This is your dashboard</p>
+      <div className="app-bg">
+        <div className="vh-100 d-flex justify-content-center align-items-center">
+          <div className="text-center">
+            <h2>🎉 Welcome {email}</h2>
+            <p>This is your dashboard</p>
+          </div>
         </div>
       </div>
     </AuthGuard>

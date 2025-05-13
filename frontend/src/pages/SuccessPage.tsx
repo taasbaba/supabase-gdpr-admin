@@ -23,10 +23,12 @@ const SuccessPage = () => {
   }, []);
 
   return (
-    <div className="vh-100 d-flex justify-content-center align-items-center bg-success text-white">
-      <div className="text-center">
-        <h2>✅ Email Verified</h2>
-        <p>Redirecting to your dashboard...</p>
+    <div className="app-bg">
+      <div className="vh-100 d-flex justify-content-center align-items-center text-white">
+        <div className="text-center">
+          <h2>✅ Email Verified</h2>
+          <p>Redirecting to your dashboard...</p>
+        </div>
       </div>
     </div>
   );
