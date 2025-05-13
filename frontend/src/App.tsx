@@ -10,7 +10,31 @@ const App = () => {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const handleSignUp = async () => {
+  // Handles user registration
+  const handleRegister = async () => {
+    if (!email || !password) return;
+
+    setStatus("loading");
+    setMessage("");
+
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: process.env.REACT_APP_EMAIL_REDIRECT,
+      },
+    });
+
+    if (error) {
+      setStatus("error");
+      setMessage("Registration failed: " + error.message);
+    } else {
+      navigate("/verify-pending");
+    }
+  };
+
+  // Handles user login
+  const handleLogin = async () => {
     if (!email || !password) return;
 
     setStatus("loading");
@@ -31,13 +55,13 @@ const App = () => {
     const isVerified = !!user?.email_confirmed_at;
 
     if (!isVerified) {
-      await supabase.auth.signOut(); // 馬上登出
+      await supabase.auth.signOut();
       setStatus("error");
       setMessage("Email not verified. Please check your inbox.");
       return;
     }
 
-    navigate("/success");
+    navigate("/dashboard");
   };
 
   return (
@@ -49,7 +73,7 @@ const App = () => {
         className="bg-white rounded p-4 shadow"
         style={{ width: "100%", maxWidth: 400 }}
       >
-        <h3 className="text-center mb-4">Create Account</h3>
+        <h3 className="text-center mb-4">Account Access</h3>
 
         <div className="mb-3">
           <label htmlFor="email" className="form-label">
@@ -81,13 +105,23 @@ const App = () => {
           />
         </div>
 
-        <button
-          className="btn btn-primary w-100"
-          onClick={handleSignUp}
-          disabled={status === "loading" || !email || !password}
-        >
-          {status === "loading" ? "Registering..." : "Sign Up"}
-        </button>
+        <div className="d-flex gap-2">
+          <button
+            className="btn btn-secondary w-50"
+            onClick={handleLogin}
+            disabled={status === "loading" || !email || !password}
+          >
+            {status === "loading" ? "Loading..." : "Login"}
+          </button>
+
+          <button
+            className="btn btn-primary w-50"
+            onClick={handleRegister}
+            disabled={status === "loading" || !email || !password}
+          >
+            {status === "loading" ? "Loading..." : "Register"}
+          </button>
+        </div>
 
         {message && <div className="alert alert-danger mt-3">{message}</div>}
       </div>
