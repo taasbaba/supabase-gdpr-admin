@@ -6,6 +6,9 @@ yarn-error.log*
 .env
 .env.local
 
+# NestJS build
+/backend/dist
+
 # React build artifacts
 /frontend/build/
 frontend/.DS_Store

@@ -8,6 +8,7 @@ const DashboardPage = () => {
   useEffect(() => {
     const getSession = async () => {
       const { data } = await supabase.auth.getSession();
+      console.log("Access token:", data.session?.access_token);
       setEmail(data.session?.user?.email ?? null);
     };
     getSession();
