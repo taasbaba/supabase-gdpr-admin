@@ -1,75 +1,81 @@
-## How to Initialize Prisma Locally (NestJS + Supabase)
+# Supabase GDPR Admin Panel
 
-### 1. Install Prisma and client (if not yet)
+* Live frontend: [https://supabase-gdpr-admin.vercel.app/](https://supabase-gdpr-admin.vercel.app/)
+* Live backend (Swagger): [https://supabase-gdpr-admin.onrender.com/docs](https://supabase-gdpr-admin.onrender.com/docs)
+* GitHub: [https://github.com/taasbaba/supabase-gdpr-admin](https://github.com/taasbaba/supabase-gdpr-admin)
 
-```bash
-npm install prisma @prisma/client
-```
+---
+## Highlights
+
+* Strong separation of concerns between authentication, identity, and team-scoped access
+* Roles and team IDs are not stored in the JWT but resolved dynamically at runtime
+* Uses PostgreSQL-level foreign key constraints and role integrity via Prisma
+* Built-in Swagger for self-documenting and testable API access
+* Full frontend+backend working demo deployed on Vercel and Render
 
 ---
 
-### 2. Enable multi-schema introspection
+## Overview
 
-Edit `prisma/schema.prisma`:
+This project demonstrates a fully functional role-based admin panel with secure JWT authentication, team-scoped user access, and GDPR-compliant user profile management.
 
-```prisma
-generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"]
-}
+It is built with:
 
-datasource db {
-  provider   = "postgresql"
-  url        = env("DATABASE_URL")
-  directUrl  = env("DIRECT_URL")
-  schemas    = ["public", "auth"]
-}
-```
+* React + Bootstrap (Frontend)
+* NestJS + Prisma (Backend)
+* Supabase (Auth + PostgreSQL)
+
+The system implements strict access control logic across three defined user roles: **manager**, **leader**, and **member**. Users are scoped to teams, and all access to other users’ data is governed by role and team boundaries.
 
 ---
 
-### 3. Run introspection to pull schema from Supabase
+## Role-Based Access Control (RBAC)
 
-```bash
-npx prisma db pull
-```
+The application enforces clearly separated privileges for each role. Behavior is consistent across both frontend views and backend API endpoints.
 
----
+### Role Definitions
 
-### 4. Generate Prisma client
-
-```bash
-npx prisma generate
-```
-
-> Prisma Client will be generated to `.prisma/client`
-> You can import it using:
->
-> ```ts
-> import { PrismaClient } from '@prisma/client';
-> ```
+| Role    | Permissions                                             |
+| ------- | ------------------------------------------------------- |
+| manager | View all users in their team (including other managers) |
+| leader  | View users in their team **excluding** managers         |
+| member  | Can view and edit only their own profile                |
 
 ---
 
-### 5. Configure `.env` with Supabase DB credentials
-![Supabase Connection Example](/docs/images/supabase-prisma-connect.png)
+## Demo Accounts
 
-To get your connection string:
-
-1. Go to your [Supabase Project Dashboard](https://supabase.com/dashboard).
-2. Click **Connect** at the top-left corner.
-3. Select the **"ORM"** tab.
-4. Copy the connection string shown.
-```env
-# Connect to Supabase via connection pooling
-DATABASE_URL=postgresql://postgres.[project_id]:[db_password]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
-# Direct connection to the database. Used for migrations
-DIRECT_URL=postgresql://postgres.[project_id]:[db_password]@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres
-```
+| Role    | Email                                                 | Password |
+| ------- | ----------------------------------------------------- | -------- |
+| manager | [it.manager@jack.com](mailto:it.manager@jack.com)     | 12345678 |
+| leader  | [it.leader@example.com](mailto:it.leader@example.com) | 12345678 |
+| member  | [it.b@example.com](mailto:it.b@example.com)           | 12345678 |
 
 ---
 
-## Backend API Notes
+## System Architecture
 
-- Default server port: `http://localhost:5678`
-- Swagger UI: `http://localhost:5678/docs`
+### Frontend (React + Bootstrap)
+
+* AuthGuard protects all routes by verifying Supabase session
+* Token is retrieved via `supabase.auth.getSession()` and passed to backend via Bearer header
+* Tab-based dashboard interface (Profile / Admin / Token)
+
+  * Profile tab shows current user profile and allows updating full name
+  * Admin tab (if permitted) fetches and displays users in the same team
+  * Token tab shows full JWT claims for debug
+* Admin tab is hidden for members and dynamically rendered based on the user's role
+
+### Backend (NestJS + Supabase Auth + Prisma)
+
+* SupabaseAuthService verifies JWTs using HS256 with runtime issuer/secret validation
+* Middleware extracts `sub` (user UUID) and uses it to fetch profile from `user_profiles`
+* `/me/profile`: returns or upserts current user's profile
+* `/admin/getall`: returns all team members visible to the requester, based on role
+* `/admin/:uuid`: returns detailed profile for specified UUID, if permitted by role
+* Prisma connects directly to Supabase PostgreSQL, ensuring full ORM capabilities
+* Swagger docs are live at `/docs` with full auth and schema support
+
+---
+
+This project demonstrates how to build a real-world, production-aligned role-based access control system with Supabase and modern frameworks, supporting both internal admin needs and future SaaS extensibility.
