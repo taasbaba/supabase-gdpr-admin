@@ -15,37 +15,57 @@ const ProfileTab: React.FC = () => {
   }, []);
 
   const handleUpdate = async () => {
-    await fetchWithToken("/me/profile", "POST", { full_name: fullName });
+    if (!profile) return;
+
+    await fetchWithToken("/me/profile", "POST", {
+      full_name: fullName,
+      team_id: profile.team_id,
+      role: profile.role,
+    });
+
     alert("Profile updated");
   };
 
   return (
-    <div className="p-4">
-      <h3 className="text-xl font-bold mb-2">Your Profile</h3>
-      <p>
-        <strong>UUID:</strong> {profile?.id}
-      </p>
-      <p>
-        <strong>Role:</strong> {profile?.role}
-      </p>
-      <p>
-        <strong>Team:</strong> {profile?.team_id}
-      </p>
-      <div className="mt-4">
-        <label className="block mb-2">Full Name</label>
-        <input
-          type="text"
-          value={fullName}
-          onChange={(e) => setFullName(e.target.value)}
-          className="border px-2 py-1 rounded w-full"
-        />
-        <button
-          onClick={handleUpdate}
-          className="mt-2 px-4 py-2 bg-blue-600 text-white rounded"
-        >
-          Update
-        </button>
+    <div>
+      <h3 className="h5 fw-bold mb-3">Your Profile</h3>
+
+      <div className="mb-2">
+        <strong>UUID:</strong> <span>{profile?.id}</span>
       </div>
+      <div className="mb-2">
+        <strong>Role:</strong> <span className="text-capitalize">{profile?.role}</span>
+      </div>
+      <div className="mb-4">
+        <strong>Team:</strong> <span>{profile?.team_id}</span>
+      </div>
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleUpdate();
+        }}
+        className="row g-2 align-items-center"
+      >
+        <div className="col-sm-8">
+          <label htmlFor="fullName" className="form-label">
+            Full Name
+          </label>
+          <input
+            id="fullName"
+            type="text"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            className="form-control"
+            placeholder="Enter your name"
+          />
+        </div>
+        <div className="col-sm-4 d-flex align-items-end">
+          <button type="submit" className="btn btn-primary w-100">
+            Update
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
