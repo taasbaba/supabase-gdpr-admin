@@ -8,7 +8,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { JwtGuard } from '../auth/jwt.guard';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UserService } from './user.service';
 
@@ -38,16 +38,11 @@ export class UserController {
   /**
    * Create the user's own profile
    */
+  @ApiOperation({ summary: 'Create or update user profile (upsert)' })
   @Post('profile')
   async createProfile(@Req() req, @Body() dto: CreateProfileDto) {
     const uid = req.user?.sub;
-
-    const existing = await this.userService.findProfileById(uid);
-    if (existing) {
-      throw new ConflictException('Profile already exists');
-    }
-
-    return this.userService.createProfile(uid, dto);
+    return this.userService.upsertProfile(uid, dto);
   }
 
   /**

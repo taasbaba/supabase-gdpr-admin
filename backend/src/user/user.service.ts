@@ -28,4 +28,24 @@ export class UserService {
       },
     });
   }
+
+  /**
+   * Upsert user profile using Supabase user ID
+   */
+  async upsertProfile(userId: string, dto: CreateProfileDto) {
+    return this.prisma.user_profiles.upsert({
+      where: { id: userId },
+      create: {
+        id: userId,
+        full_name: dto.full_name,
+        team_id: dto.team_id,
+        role: dto.role,
+      },
+      update: {
+        full_name: dto.full_name,
+        team_id: dto.team_id,
+        role: dto.role,
+      },
+    });
+  }
 }
