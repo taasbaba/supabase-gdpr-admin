@@ -66,13 +66,13 @@ const AuthForm: React.FC<Props> = ({
             >
               {loading ? "Loading..." : "Login"}
             </button>
-            <button
+            {/* <button
               className="btn btn-primary w-50"
               onClick={onRegister}
               disabled={loading || !email || !password}
             >
               {loading ? "Loading..." : "Register"}
-            </button>
+            </button> */}
           </div>
 
           {message && <div className="alert alert-danger mt-3">{message}</div>}
