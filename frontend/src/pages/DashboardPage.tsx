@@ -39,16 +39,18 @@ const DashboardPage = () => {
   return (
     <AuthGuard>
       <div className="app-bg">
-        <div className="container-fluid min-vh-100 d-flex flex-column align-items-center py-4">
+        <div className="container-fluid min-vh-100 d-flex flex-column align-items-center py-4 px-2">
           <div className="w-100" style={{ maxWidth: "960px" }}>
-            <div className="d-flex justify-content-between align-items-center bg-white shadow-sm rounded p-3 mb-3 border">
-              <h2 className="mb-0">🎉 Welcome {email}</h2>
-              <button
-                onClick={handleLogout}
-                className="btn btn-outline-danger btn-sm"
-              >
-                Logout
-              </button>
+            <div className="bg-white shadow-sm rounded p-3 mb-3 border">
+              <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                <h2 className="mb-0 text-break">🎉 Welcome {email}</h2>
+                <button
+                  onClick={handleLogout}
+                  className="btn btn-outline-danger btn-sm"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
 
             <div className="mb-3">
