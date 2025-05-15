@@ -16,6 +16,7 @@ const DashboardPage = () => {
     const init = async () => {
       const { data } = await supabase.auth.getSession();
       setEmail(data.session?.user?.email ?? null);
+      console.log("JWT Token:", data.session?.access_token);
 
       try {
         const profile = await fetchWithToken("/me/profile");
