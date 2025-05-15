@@ -76,6 +76,23 @@ const AuthForm: React.FC<Props> = ({
           </div>
 
           {message && <div className="alert alert-danger mt-3">{message}</div>}
+
+          <div className="mt-4 border-top pt-3">
+            <p className="mb-2 fw-semibold">
+              Demo Accounts (password: <code>12345678</code>):
+            </p>
+            <ul className="list-unstyled mb-0 small">
+              <li>
+                <strong>Manager</strong>: it.manager@jack.com
+              </li>
+              <li>
+                <strong>Leader</strong>: it.leader@jack.com
+              </li>
+              <li>
+                <strong>Member</strong>: it.b@jack.com
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
