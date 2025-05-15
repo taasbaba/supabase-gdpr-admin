@@ -17,7 +17,7 @@ const AuthGuard = ({ children }: { children: JSX.Element }) => {
     };
 
     checkSession();
-  }, []);
+  }, [navigate]);
 
   if (checking) {
     return (
