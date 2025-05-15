@@ -1,14 +1,20 @@
-// src/components/TabBar.tsx
 import React from "react";
 
 interface TabBarProps {
-  active: "profile" | "admin" | "token" | "attendance";
-  onChange: (tab: "profile" | "admin" | "token" | "attendance") => void;
+  active:
+    | "profile"
+    | "attendance"
+    | "leave"
+    | "inbox"
+    | "admin"
+    | "token";
+  onChange: (tab: TabBarProps["active"]) => void;
+  role: string | null;
 }
 
-const TabBar: React.FC<TabBarProps> = ({ active, onChange }) => {
+const TabBar: React.FC<TabBarProps> = ({ active, onChange, role }) => {
   return (
-    <div className="nav nav-tabs">
+    <div className="nav nav-tabs flex-wrap">
       <button
         className={`nav-link ${active === "profile" ? "active" : ""}`}
         onClick={() => onChange("profile")}
@@ -22,11 +28,27 @@ const TabBar: React.FC<TabBarProps> = ({ active, onChange }) => {
         ATTENDANCE
       </button>
       <button
-        className={`nav-link ${active === "admin" ? "active" : ""}`}
-        onClick={() => onChange("admin")}
+        className={`nav-link ${active === "leave" ? "active" : ""}`}
+        onClick={() => onChange("leave")}
       >
-        ADMIN
+        LEAVE
       </button>
+      {(role === "manager" || role === "leader") && (
+        <button
+          className={`nav-link ${active === "inbox" ? "active" : ""}`}
+          onClick={() => onChange("inbox")}
+        >
+          INBOX
+        </button>
+      )}
+      {role !== "member" && (
+        <button
+          className={`nav-link ${active === "admin" ? "active" : ""}`}
+          onClick={() => onChange("admin")}
+        >
+          ADMIN
+        </button>
+      )}
       <button
         className={`nav-link ${active === "token" ? "active" : ""}`}
         onClick={() => onChange("token")}
