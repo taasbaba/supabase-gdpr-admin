@@ -5,11 +5,14 @@ import TabBar from "../components/TabBar";
 import ProfileTab from "../components/ProfileTab";
 import AdminTab from "../components/AdminTab";
 import TokenTab from "../components/TokenTab";
+import AttendanceTab from "../components/AttendanceTab";
 import { fetchWithToken } from "../lib/apiClient";
 
 const DashboardPage = () => {
   const [email, setEmail] = useState<string | null>(null);
-  const [tab, setTab] = useState<"profile" | "admin" | "token">("profile");
+  const [tab, setTab] = useState<"profile" | "admin" | "token" | "attendance">(
+    "profile"
+  );
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
@@ -54,7 +57,8 @@ const DashboardPage = () => {
 
             <div className="bg-white shadow rounded p-4 border">
               {tab === "profile" && <ProfileTab />}
-              {tab === "admin" && role !== "member" && <AdminTab />}
+              {tab === "attendance" && <AttendanceTab role={role} />}
+              {tab === "admin" && role !== "member" && <AdminTab role={role} />}
               {tab === "token" && <TokenTab />}
             </div>
           </div>
