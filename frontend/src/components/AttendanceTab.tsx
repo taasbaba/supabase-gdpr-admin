@@ -103,9 +103,52 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({ role }) => {
 
   return (
     <div>
+      <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap">
+        <div className="fs-5 fw-medium">
+          {new Date().toLocaleDateString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </div>
+        <div className="d-flex gap-3">
+          <button
+            className="btn btn-success btn-lg px-4"
+            onClick={async () => {
+              try {
+                await fetchWithToken("/attendance/time-in", "POST");
+                fetchAttendanceMe();
+              } catch (err: any) {
+                alert("Clock In failed: " + err.message);
+              }
+            }}
+          >
+            Clock In
+          </button>
+          <button
+            className="btn btn-danger btn-lg px-4"
+            onClick={async () => {
+              try {
+                await fetchWithToken("/attendance/time-out", "POST");
+                fetchAttendanceMe();
+              } catch (err: any) {
+                alert("Clock Out failed: " + err.message);
+              }
+            }}
+          >
+            Clock Out
+          </button>
+        </div>
+      </div>
+
       <h4 className="mb-3">Attendance (Last 30 Days)</h4>
       {errorSelf && <div className="alert alert-danger">{errorSelf}</div>}
-      {loadingSelf ? <p>Loading attendance records...</p> : renderTable(records)}
+      {loadingSelf ? (
+        <p>Loading attendance records...</p>
+      ) : (
+        renderTable(records)
+      )}
 
       {(role === "manager" || role === "leader") && (
         <>
@@ -126,7 +169,9 @@ const AttendanceTab: React.FC<AttendanceTabProps> = ({ role }) => {
           {selectedUser && (
             <>
               <h6 className="mt-4">{selectedUser.full_name}'s Attendance</h6>
-              {errorTarget && <div className="alert alert-danger">{errorTarget}</div>}
+              {errorTarget && (
+                <div className="alert alert-danger">{errorTarget}</div>
+              )}
               {loadingTarget ? (
                 <p>Loading attendance records...</p>
               ) : (
