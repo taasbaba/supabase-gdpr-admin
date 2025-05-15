@@ -24,8 +24,11 @@ export class JwtGuard implements CanActivate {
     const token = authHeader.split(' ')[1];
     const payload = await this.authService.verifyToken(token);
 
+    if (!payload?.sub) {
+      throw new UnauthorizedException('Missing sub in token payload');
+    }
     // Inject to request object
-    request['user'] = payload;
+    request['user'] = payload as { sub: string; [key: string]: any };
     return true;
   }
 }
