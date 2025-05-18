@@ -9,6 +9,7 @@ import GuestGuard from "./components/GuestGuard";
 
 import "./index.css";
 import ApplyLeavePage from "./pages/ApplyLeavePage";
+import InboxPage from "./pages/InboxPage";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -42,12 +43,21 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             </AuthGuard>
           }
         />
-        {/* attendance page route */}
+        {/* leave page route */}
         <Route
           path="/leave"
           element={
             <AuthGuard>
               <ApplyLeavePage />
+            </AuthGuard>
+          }
+        />
+        {/* inbox page route */}
+        <Route
+          path="/inbox"
+          element={
+            <AuthGuard>
+              <InboxPage />
             </AuthGuard>
           }
         />

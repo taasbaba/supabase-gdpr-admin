@@ -1,11 +1,30 @@
+import React, { useEffect, useState } from "react";
 import Sidebar from "../components/Sidebar";
 import HeaderBar from "../components/HeaderBar";
 import MetricCard from "../components/MetricCard";
 import AbsenceChart from "../components/AbsenceChart";
 import UserProfileCard from "../components/UserProfileCard";
 import LeaveTable from "../components/LeaveTable";
+import { fetchWithToken } from "../lib/apiClient";
 
-const DashboardPage = () => {
+const DashboardPage: React.FC = () => {
+  const [name, setName] = useState("...");
+  const [role, setRole] = useState("...");
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data = await fetchWithToken("/me/profile");
+        setName(data.full_name || "Unknown");
+        setRole(data.role || "Unknown");
+      } catch (err: any) {
+        console.error("Failed to load profile", err.message);
+      }
+    };
+
+    fetchProfile();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-100 flex">
       {/* Sidebar */}
@@ -29,10 +48,7 @@ const DashboardPage = () => {
           <div className="col-span-2">
             <AbsenceChart />
           </div>
-          <UserProfileCard
-            name="John Doe"
-            role="Administrator"
-          />
+          <UserProfileCard name={name} role={role} />
         </div>
 
         {/* Leave Table */}
