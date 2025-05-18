@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
+import MyAttendancePage from "./pages/MyAttendancePage";
 import AuthGuard from "./components/AuthGuard";
 import GuestGuard from "./components/GuestGuard";
 
@@ -31,7 +32,15 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             </AuthGuard>
           }
         />
-
+        {/* attendance page route */}
+        <Route
+          path="/attendance"
+          element={
+            <AuthGuard>
+              <MyAttendancePage />
+            </AuthGuard>
+          }
+        />
         {/* Fallback: redirect any unknown route to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
