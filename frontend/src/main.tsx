@@ -8,6 +8,7 @@ import AuthGuard from "./components/AuthGuard";
 import GuestGuard from "./components/GuestGuard";
 
 import "./index.css";
+import ApplyLeavePage from "./pages/ApplyLeavePage";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -38,6 +39,15 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           element={
             <AuthGuard>
               <MyAttendancePage />
+            </AuthGuard>
+          }
+        />
+        {/* attendance page route */}
+        <Route
+          path="/leave"
+          element={
+            <AuthGuard>
+              <ApplyLeavePage />
             </AuthGuard>
           }
         />

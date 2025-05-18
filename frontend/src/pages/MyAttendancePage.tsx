@@ -20,7 +20,6 @@ const MyAttendancePage: React.FC = () => {
   const [teamUsers, setTeamUsers] = useState<TeamUser[]>([]);
   const [selectedUser, setSelectedUser] = useState<TeamUser | null>(null);
   const [role, setRole] = useState<string | null>(null);
-
   const [loadingSelf, setLoadingSelf] = useState(false);
   const [loadingTarget, setLoadingTarget] = useState(false);
   const [errorSelf, setErrorSelf] = useState<string | null>(null);
@@ -66,10 +65,8 @@ const MyAttendancePage: React.FC = () => {
     const data = await fetchWithToken("/me/profile");
     const userRole = data?.role || null;
     setRole(userRole);
-    console.log("In detectRole", data);
     if (userRole === "manager" || userRole === "leader") {
       await fetchTeamUsers();
-      console.log(teamUsers);
     }
   };
 
@@ -79,18 +76,18 @@ const MyAttendancePage: React.FC = () => {
   }, []);
 
   const renderTable = (records: AttendanceRecord[]) => (
-    <div className="overflow-x-auto rounded border border-gray-200">
-      <table className="min-w-full divide-y divide-gray-200 text-sm">
-        <thead className="bg-gray-50">
+    <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm bg-white">
+      <table className="min-w-full text-sm text-gray-700">
+        <thead className="bg-gray-100">
           <tr>
-            <th className="px-4 py-2 text-left font-medium text-gray-600">Date</th>
-            <th className="px-4 py-2 text-left font-medium text-gray-600">Time In</th>
-            <th className="px-4 py-2 text-left font-medium text-gray-600">Time Out</th>
+            <th className="px-4 py-3 text-left font-semibold">Date</th>
+            <th className="px-4 py-3 text-left font-semibold">Time In</th>
+            <th className="px-4 py-3 text-left font-semibold">Time Out</th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y divide-gray-100">
+        <tbody className="divide-y divide-gray-200">
           {records.map((rec, idx) => (
-            <tr key={idx}>
+            <tr key={idx} className="hover:bg-gray-50">
               <td className="px-4 py-2">{rec.date.slice(0, 10)}</td>
               <td className="px-4 py-2">{rec.time_in ? new Date(rec.time_in).toLocaleTimeString() : "--"}</td>
               <td className="px-4 py-2">{rec.time_out ? new Date(rec.time_out).toLocaleTimeString() : "--"}</td>
@@ -103,19 +100,19 @@ const MyAttendancePage: React.FC = () => {
 
   return (
     <DashboardLayout title="My Attendance">
-      <div className="space-y-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
-          <div className="text-lg font-medium text-gray-700">
+      <div className="space-y-10 px-4 sm:px-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <h2 className="text-2xl font-bold text-gray-800">
             {new Date().toLocaleDateString("en-US", {
               weekday: "long",
               year: "numeric",
               month: "long",
               day: "numeric",
             })}
-          </div>
-          <div className="flex gap-4 mt-4 sm:mt-0">
+          </h2>
+          <div className="flex gap-3">
             <button
-              className="px-5 py-2 bg-green-600 text-white rounded shadow hover:bg-green-700"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg font-medium shadow"
               onClick={async () => {
                 try {
                   await fetchWithToken("/attendance/time-in", "POST");
@@ -128,7 +125,7 @@ const MyAttendancePage: React.FC = () => {
               Clock In
             </button>
             <button
-              className="px-5 py-2 bg-red-600 text-white rounded shadow hover:bg-red-700"
+              className="bg-rose-600 hover:bg-rose-700 text-white px-5 py-2 rounded-lg font-medium shadow"
               onClick={async () => {
                 try {
                   await fetchWithToken("/attendance/time-out", "POST");
@@ -143,39 +140,37 @@ const MyAttendancePage: React.FC = () => {
           </div>
         </div>
 
-        <div>
-          <h3 className="text-xl font-semibold text-gray-700 mb-3">My Attendance (Latest 10 Records)</h3>
-          {errorSelf && <div className="text-red-500">{errorSelf}</div>}
-          {loadingSelf ? <p>Loading...</p> : renderTable(records)}
-        </div>
+        <section>
+          <h3 className="text-xl font-semibold text-gray-700 mb-4">My Attendance (Latest 10 Records)</h3>
+          {errorSelf && <p className="text-red-600">{errorSelf}</p>}
+          {loadingSelf ? <p className="text-gray-500">Loading...</p> : renderTable(records)}
+        </section>
 
         {(role === "manager" || role === "leader") && (
-          <div className="space-y-6">
-            <div>
-              <h4 className="text-lg font-semibold text-gray-700 mb-2">Your Team</h4>
-              <div className="flex flex-wrap gap-2">
-                {teamUsers.map((user) => (
-                  <button
-                    key={user.id}
-                    className="px-4 py-1 border border-gray-400 text-sm rounded hover:bg-gray-100"
-                    onClick={() => fetchAttendanceTarget(user)}
-                  >
-                    {user.full_name}
-                  </button>
-                ))}
-              </div>
+          <section>
+            <h4 className="text-xl font-semibold text-gray-700 mb-4">Your Team</h4>
+            <div className="flex flex-wrap gap-2 mb-6">
+              {teamUsers.map((user) => (
+                <button
+                  key={user.id}
+                  onClick={() => fetchAttendanceTarget(user)}
+                  className="px-4 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50"
+                >
+                  {user.full_name}
+                </button>
+              ))}
             </div>
 
             {selectedUser && (
               <div>
-                <h5 className="text-md font-medium text-gray-600 mb-2">
+                <h5 className="text-md font-medium text-gray-600 mb-3">
                   {selectedUser.full_name}'s Attendance
                 </h5>
-                {errorTarget && <div className="text-red-500">{errorTarget}</div>}
-                {loadingTarget ? <p>Loading...</p> : renderTable(targetRecords)}
+                {errorTarget && <p className="text-red-600">{errorTarget}</p>}
+                {loadingTarget ? <p className="text-gray-500">Loading...</p> : renderTable(targetRecords)}
               </div>
             )}
-          </div>
+          </section>
         )}
       </div>
     </DashboardLayout>
