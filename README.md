@@ -2,80 +2,71 @@
 
 * Live frontend: [https://supabase-gdpr-admin.vercel.app/](https://supabase-gdpr-admin.vercel.app/)
 * Live backend (Swagger): [https://supabase-gdpr-admin.onrender.com/docs](https://supabase-gdpr-admin.onrender.com/docs)
+* YouTube demo: [https://youtu.be/2cebUz1n4c4](https://youtu.be/2cebUz1n4c4)
 * GitHub: [https://github.com/taasbaba/supabase-gdpr-admin](https://github.com/taasbaba/supabase-gdpr-admin)
 
 ---
+
 ## Highlights
 
-* Strong separation of concerns between authentication, identity, and team-scoped access
-* Roles and team IDs are not stored in the JWT but resolved dynamically at runtime
-* Uses PostgreSQL-level foreign key constraints and role integrity via Prisma
-* Built-in Swagger for self-documenting and testable API access
-* Full frontend+backend working demo deployed on Vercel and Render
+* Role-based login with dynamic dashboard content per role
+* Leave request and approval workflow, with approval escalation
+* Team-scoped attendance and clock-in/clock-out tracking
+* Real-time profile and request update display
+* Fully deployed backend and frontend with working authentication
 
 ---
 
 ## Overview
 
-This project demonstrates a fully functional role-based admin panel with secure JWT authentication, team-scoped user access, and GDPR-compliant user profile management.
+This is a role-based HR dashboard demo designed for async backend hiring scenarios.
 
-It is built with:
+The system implements secure JWT authentication, role-level access control, leave approval workflow, and team-based attendance visibility. All flows are fully functional and deployed for demo access.
 
-* React + Bootstrap (Frontend)
+Built with:
+
+* React + TailwindCSS (Frontend)
 * NestJS + Prisma (Backend)
 * Supabase (Auth + PostgreSQL)
-
-The system implements strict access control logic across three defined user roles: **manager**, **leader**, and **member**. Users are scoped to teams, and all access to other users’ data is governed by role and team boundaries.
+* Deployed on Vercel (frontend) and Render (backend)
 
 ---
 
 ## Role-Based Access Control (RBAC)
 
-The application enforces clearly separated privileges for each role. Behavior is consistent across both frontend views and backend API endpoints.
-
-### Role Definitions
-
 | Role    | Permissions                                             |
 | ------- | ------------------------------------------------------- |
 | manager | View all users in their team (including other managers) |
 | leader  | View users in their team **excluding** managers         |
-| member  | Can view and edit only their own profile                |
+| member  | View only own profile, leave requests, and clock-in     |
+
+Access controls apply consistently across backend API endpoints and frontend components.
 
 ---
 
-## Demo Accounts
+## Features
 
-| Role    | Email                                                 | Password |
-| ------- | ----------------------------------------------------- | -------- |
-| manager | [it.manager@jack.com](mailto:it.manager@jack.com)     | 12345678 |
-| leader  | [it.leader@example.com](mailto:it.leader@example.com) | 12345678 |
-| member  | [it.b@example.com](mailto:it.b@example.com)           | 12345678 |
-
----
-
-## System Architecture
-
-### Frontend (React + Bootstrap)
-
-* AuthGuard protects all routes by verifying Supabase session
-* Token is retrieved via `supabase.auth.getSession()` and passed to backend via Bearer header
-* Tab-based dashboard interface (Profile / Admin / Token)
-
-  * Profile tab shows current user profile and allows updating full name
-  * Admin tab (if permitted) fetches and displays users in the same team
-  * Token tab shows full JWT claims for debug
-* Admin tab is hidden for members and dynamically rendered based on the user's role
-
-### Backend (NestJS + Supabase Auth + Prisma)
-
-* SupabaseAuthService verifies JWTs using HS256 with runtime issuer/secret validation
-* Middleware extracts `sub` (user UUID) and uses it to fetch profile from `user_profiles`
-* `/me/profile`: returns or upserts current user's profile
-* `/admin/getall`: returns all team members visible to the requester, based on role
-* `/admin/:uuid`: returns detailed profile for specified UUID, if permitted by role
-* Prisma connects directly to Supabase PostgreSQL, ensuring full ORM capabilities
-* Swagger docs are live at `/docs` with full auth and schema support
+* **Clock In/Out** — Track attendance with timestamps
+* **Leave Requests** — Submit leave with message and date range
+* **Inbox** — Leaders/managers approve leave requests for users under them
+* **Admin View** — View team members based on role; scoped securely
 
 ---
 
-This project demonstrates how to build a real-world, production-aligned role-based access control system with Supabase and modern frameworks, supporting both internal admin needs and future SaaS extensibility.
+
+## Backend Endpoints
+
+* `/auth/me/profile` — Get or update logged-in user's profile
+* `/auth/me/team` — Get list of team members based on role
+* `/leave/apply` — Submit new leave request
+* `/leave/my` — List leave requests by requester
+* `/leave/inbox` — List leave requests to be approved by user
+* `/leave/approve/:id` — Approve a pending leave request
+
+---
+
+## Notes
+
+This system uses real auth via Supabase JWTs (HS256), verified inside NestJS middleware. Prisma handles DB access via Supabase PostgreSQL. Swagger docs are auto-generated and support live token testing.
+
+The project is fully open-source and serves as a working demonstration of production-aligned RBAC and workflow design for small to medium HR tooling.
